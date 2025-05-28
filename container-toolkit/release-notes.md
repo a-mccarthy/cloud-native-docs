@@ -14,6 +14,63 @@ ______________________________________________________________________
 
 This release of the NVIDIA Container Toolkit `v1.17.7` is a bugfix and minor feature release.
 
+### Fixes and Features
+- Fixed mode detection on Thor-based systems. With this change, the runtime mode correctly resolves to `csv`.
+- Fixed the resolution of libraries in the LDCache on ARM. This fixes CDI spec generation on ARM-based systems using NVML.
+- Added a `nvidia-container-runtime-modes.legacy.cuda-compat-mode` option to provide finer control of how CUDA Forward Compatibility is handled. The default value (`ldconfig`) fixes CUDA Compatibility Support in cases where only the NVIDIA Container Runtime Hook is used (e.g. the Docker `--gpus` command line flag).
+- Improved the `update-ldcache` hook to run in isolated namespaces. This improves hook security.
+
+
+#### Enhancements to libnvidia-container
+- Added a `--cuda-compat-mode` flag to the `nvidia-container-cli configure` command. The `--no-cntlibs` argument is deprecated and is replaced by the `--cuda-compat-mode=disabled` option.
+  Refer to the [known issue](#known-issues) section for details on a known issue for this flag.
+
+#### Enhancements to container-toolkit Container Images
+- Updated the CUDA base image version to 12.9.0.
+
+### Known Issues
+
+There is a [known issue](https://github.com/NVIDIA/nvidia-container-toolkit/issues/1093) in this release that causes unexpected failures in the following scenarios:
+
+* When invoking `nvidia-container-cli` directly. For example if you are using Enroot containers with Slurm.
+
+* When older versions of the `nvidia-container-toolkit` and `nvidia-container-toolkit-base` packages are used with the latest `libnvidia-container-tools` and `libnvidia-container1` packages.
+For example if you are only pinning the `nvidia-contianer-toolkit` and `nvidia-container-toolkit-base` package versions.
+
+This issue is caused by container flags being discarded when handling the default values of the `cuda-compat-mode` flag.
+This flag was added to the `nvidia-container-cli configure` command in the this release.
+
+```{important}
+If you are impacted by this issue, its recommended that you continue to use Container Toolkit v1.17.6 and pin all dependencies to v1.17.6 until this issue is resolved in the next patch release.
+```
+
+#### Pin dependencies to Container Toolkit 1.17.6
+
+**Using `apt` (Ubuntu, Debian):**
+
+```
+NVIDIA_CONTAINER_TOOLKIT_VERSION=1.17.6-1 \
+    apt-get install -y --allow-downgrades \
+        nvidia-container-toolkit=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+        nvidia-container-toolkit-base=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+        libnvidia-container-tools=${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+        libnvidia-container1=${NVIDIA_CONTAINER_TOOLKIT_VERSION}
+```
+
+
+**Using `dnf` (RHEL/CentOS, Fedora, Amazon Linux):**
+
+```  
+NVIDIA_CONTAINER_TOOLKIT_VERSION=1.17.6-1 \
+    dnf install -y \
+        nvidia-container-toolkit-${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+        nvidia-container-toolkit-base-${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+        libnvidia-container-tools-${NVIDIA_CONTAINER_TOOLKIT_VERSION} \
+        libnvidia-container1-${NVIDIA_CONTAINER_TOOLKIT_VERSION}
+```
+
+### Included Packages
+
 The following packages are included:
 
 - `nvidia-container-toolkit 1.17.7`
@@ -25,19 +82,6 @@ The following `container-toolkit` conatiners are included:
 
 - `nvcr.io/nvidia/k8s/container-toolkit:v1.17.7-ubi8`
 - `nvcr.io/nvidia/k8s/container-toolkit:v1.17.7-ubuntu20.04` (also as `nvcr.io/nvidia/k8s/container-toolkit:v1.17.7`)
-
-### Fixes and Features
-- Fixed mode detection on Thor-based systems. With this change, the runtime mode correctly resolves to `csv`.
-- Fixed the resolution of libraries in the LDCache on ARM. This fixes CDI spec generation on ARM-based systems using NVML.
-- Added a `nvidia-container-runtime-modes.legacy.cuda-compat-mode` option to provide finer control of how CUDA Forward Compatibility is handled. The default value (`ldconfig`) fixes CUDA Compatibility Support in cases where only the NVIDIA Container Runtime Hook is used (e.g. the Docker `--gpus` command line flag).
-- Improved the `update-ldcache` hook to run in isolated namespaces. This improves hook security.
-
-
-#### Enhancements to libnvidia-container
-- Added a `--cuda-compat-mode` flag to the `nvidia-container-cli configure` command. The `--no-cntlibs` argument is deprecated and is replaced by the `--cuda-compat-mode=disabled` option.
-
-#### Enhancements to container-toolkit Container Images
-- Updated the CUDA base image version to 12.9.0.
 
 ## NVIDIA Container Toolkit 1.17.6
 
