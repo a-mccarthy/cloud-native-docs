@@ -19,9 +19,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Build image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile
@@ -39,7 +39,7 @@ jobs:
           sudo mv _build/docs/review/latest/* _build/docs
           sudo rm -rf _build/docs/review _build/docs/tmp _build/docs/sphinx_warnings.txt
       - name: Upload HTML
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: html-build-artifact
           path: _build/docs
@@ -52,7 +52,7 @@ jobs:
           echo ${{ github.event.pull_request.merged }} > ./pr/merged.txt
           echo ${{ github.event.action }}              > ./pr/action.txt
       - name: Upload PR information
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pr
           path: pr/

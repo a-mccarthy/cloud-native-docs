@@ -30,7 +30,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Log in to Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -72,15 +72,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       - name: Log in to Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile
@@ -108,7 +108,7 @@ jobs:
           mv _build/docs/review/latest/* _build/docs
           rm -rf _build/docs/review _build/docs/tmp _build/docs/sphinx_warnings.txt
       - name: Upload HTML
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: html-build-artifact
           path: _build/docs
@@ -123,7 +123,7 @@ jobs:
           echo ${{ github.event.action }}              > ./pr/action.txt
       - name: Upload PR information
         if: ${{ github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pr
           path: pr/
@@ -140,7 +140,7 @@ jobs:
           git config user.name docs-build
           git config user.email do-not-send@github.com
       - name: Download artifacts
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: html-build-artifact
       - name: Copy HTML directories
